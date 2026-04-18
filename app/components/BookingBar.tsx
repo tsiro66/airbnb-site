@@ -1,6 +1,6 @@
 export default function BookingBar() {
   return (
-    <div className="mt-6 md:mt-8 flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-2 rounded-3xl md:rounded-full bg-white/90 backdrop-blur-sm px-4 md:px-2 py-4 md:py-2 shadow-lg w-[90%] sm:w-auto">
+    <div className="mt-6 md:mt-8 flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-2 rounded-3xl md:rounded-full bg-white/90 px-4 md:px-2 py-4 md:py-2 shadow-lg w-[90%] sm:w-auto">
       <div className="flex flex-col px-3 md:px-5 py-1 border-b md:border-b-0 md:border-r border-stone-200">
         <span className="text-xs font-semibold text-stone-500">Check in</span>
         <input
