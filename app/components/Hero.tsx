@@ -5,8 +5,6 @@ import { useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import BookingBar from "./BookingBar";
-
 gsap.registerPlugin(ScrollTrigger);
 
 const apartments = [
@@ -23,7 +21,7 @@ export default function Hero() {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const circlesRef = useRef<HTMLDivElement>(null);
-  const barRef = useRef<HTMLDivElement>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const vignetteRef = useRef<HTMLDivElement>(null);
 
@@ -33,9 +31,9 @@ export default function Hero() {
     const titleWrap = titleWrapRef.current;
     const title = titleRef.current;
     const subtitle = subtitleRef.current;
-    const bar = barRef.current;
+    const btn = btnRef.current;
     const image = imageRef.current;
-    if (!section || !sticky || !titleWrap || !title || !subtitle || !bar || !image) return;
+    if (!section || !sticky || !titleWrap || !title || !subtitle || !btn || !image) return;
 
     // Calculate offset to center the h1 text in viewport (not the wrapper)
     const titleRect = title.getBoundingClientRect();
@@ -49,7 +47,7 @@ export default function Hero() {
     // Hide everything except title initially
     gsap.set([subtitle], { autoAlpha: 0, y: 10 });
     if (circles) gsap.set(circles, { autoAlpha: 0, y: 10 });
-    gsap.set(bar, { autoAlpha: 0, y: 20 });
+    gsap.set(btn, { autoAlpha: 0, y: 20 });
     gsap.set(image, { autoAlpha: 0 });
     gsap.set(titleWrap, { y: yOffset });
 
@@ -79,9 +77,9 @@ export default function Hero() {
       );
     }
 
-    // Fade in booking bar with slide up
+    // Fade in book button with slide up
     intro.to(
-      bar,
+      btn,
       {
         autoAlpha: 1,
         y: 0,
@@ -111,9 +109,20 @@ export default function Hero() {
 
         const vw = window.visualViewport?.width ?? window.innerWidth;
         const vh = window.visualViewport?.height ?? window.innerHeight;
+
+        // Measure circles bottom to calculate even gap
+        const circlesBottom = circles
+          ? circles.getBoundingClientRect().bottom
+          : titleWrap.getBoundingClientRect().bottom;
+        const gap = mobile ? 20 : 32;
+        const btnHeight = mobile ? 44 : 64;
+        const btnGap = mobile ? 50 : 40;
+        const imageTop = circlesBottom + gap;
+        const availableH = vh - imageTop - btnGap - btnHeight - btnGap;
+        const startH = Math.max(availableH, 80);
         const startW = mobile ? vw * 0.3 : vw * 0.12;
-        const startH = mobile ? vh * 0.3 : vh * 0.4;
-        const startBottom = mobile ? 50 : 120;
+        // Position from top: convert to bottom value
+        const startBottom = vh - imageTop - startH;
 
         gsap.set(image, {
           width: startW,
@@ -166,20 +175,20 @@ export default function Hero() {
   return (
     <section ref={sectionRef} className="relative h-[200svh]">
       <div ref={stickyRef} className="sticky top-0 h-[100svh] flex flex-col items-center overflow-hidden">
-        <div ref={titleWrapRef} className="flex flex-col items-center justify-center pt-20 md:pt-44 text-center px-6">
+        <div ref={titleWrapRef} className="flex flex-col items-center justify-center pt-40 text-center px-6">
           <h1
             ref={titleRef}
             className="text-4xl sm:text-5xl md:text-7xl font-[family-name:var(--font-melodrama)]"
           >
             Bill Apartments Patra
           </h1>
-          <p ref={subtitleRef} className="mt-2 md:mt-4 mb-2 md:mb-0 text-xs md:text-lg text-stone-600">
+          <p ref={subtitleRef} className="mt-3 md:mt-5 text-xs md:text-lg text-stone-600">
             Select you apartment and book your stay in the heart of Patras
           </p>
         </div>
 
         {/* Apartment circles */}
-        <div ref={circlesRef} className="flex gap-4 mt-4 md:mt-6">
+        <div ref={circlesRef} className="flex gap-4 mt-5 md:mt-8">
           {apartments.map((apt, i) => (
             <button
               key={apt.src}
@@ -202,9 +211,12 @@ export default function Hero() {
           ))}
         </div>
 
-        <div ref={barRef} className="w-full flex justify-center">
-          <BookingBar />
-        </div>
+        <button
+          ref={btnRef}
+          className="absolute bottom-20 md:bottom-10 left-1/2 -translate-x-1/2 z-10 rounded-full bg-black text-white px-8 py-3 text-sm md:px-12 md:py-4 md:text-base font-semibold tracking-wide hover:bg-stone-800 transition-colors cursor-pointer shadow-lg"
+        >
+          Book
+        </button>
 
         <div ref={imageRef} className="absolute overflow-hidden border border-white/20">
           {apartments.map((apt, i) => (
