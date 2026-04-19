@@ -27,7 +27,7 @@ export default function Navbar() {
       opacity: 1,
       filter: "blur(0px)",
       duration: 0.8,
-      ease: "power2.out",
+      ease: "back.inOut",
       delay: 2.8,
     });
 
@@ -47,6 +47,7 @@ export default function Navbar() {
     const linkEls = Array.from(links.children);
 
     if (open) {
+      document.body.style.overflow = "hidden";
       gsap.to(curtain, { yPercent: 0, duration: 1, ease: "power4.inOut" });
       gsap.to(line1, { rotation: 45, y: 4, duration: 0.4, ease: "power2.inOut" });
       gsap.to(line2, { rotation: -45, y: -4, duration: 0.4, ease: "power2.inOut" });
@@ -55,6 +56,7 @@ export default function Navbar() {
         { y: 0, opacity: 1, duration: 0.7, stagger: 0.06, ease: "power3.out", delay: 0.5 }
       );
     } else {
+      document.body.style.overflow = "";
       gsap.to(curtain, { yPercent: -100, duration: 0.8, ease: "power4.inOut" });
       gsap.to(line1, { rotation: 0, y: 0, duration: 0.4, ease: "power2.inOut" });
       gsap.to(line2, { rotation: 0, y: 0, duration: 0.4, ease: "power2.inOut" });
