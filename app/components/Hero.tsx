@@ -164,8 +164,8 @@ export default function Hero() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative h-[200dvh]">
-      <div ref={stickyRef} className="sticky top-0 h-[100dvh] flex flex-col items-center overflow-hidden">
+    <section ref={sectionRef} className="relative h-[200svh]">
+      <div ref={stickyRef} className="sticky top-0 h-[100svh] flex flex-col items-center overflow-hidden">
         <div ref={titleWrapRef} className="flex flex-col items-center justify-center pt-20 md:pt-44 text-center px-6">
           <h1
             ref={titleRef}
