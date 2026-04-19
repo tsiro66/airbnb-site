@@ -32,7 +32,7 @@ export default function Footer() {
   return (
     <footer
       ref={footerRef}
-      className="sticky bottom-0 z-0 h-screen bg-black text-white flex flex-col items-center justify-center px-6 md:px-16 relative"
+      className="sticky bottom-0 z-0 h-[100dvh] bg-black text-white flex flex-col items-center justify-center px-6 md:px-16 relative"
     >
       <div ref={contentRef} className="flex flex-col items-center">
         <h2 className="text-4xl sm:text-5xl md:text-7xl font-[family-name:var(--font-melodrama)] text-center">
