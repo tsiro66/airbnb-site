@@ -10,7 +10,16 @@ import { apartments } from "../data/apartments";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Hero() {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(() => {
+    if (typeof window !== "undefined") {
+      const stored = sessionStorage.getItem("select-apartment");
+      if (stored !== null) {
+        sessionStorage.removeItem("select-apartment");
+        return Number(stored);
+      }
+    }
+    return 0;
+  });
   const sectionRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
   const titleWrapRef = useRef<HTMLDivElement>(null);
@@ -23,13 +32,6 @@ export default function Hero() {
 
   // Listen for apartment selection from navbar
   useEffect(() => {
-    // Check if navigated back from another page with a stored selection
-    const stored = sessionStorage.getItem("select-apartment");
-    if (stored !== null) {
-      setActiveIndex(Number(stored));
-      sessionStorage.removeItem("select-apartment");
-    }
-
     const handler = (e: Event) => {
       const index = (e as CustomEvent<number>).detail;
       setActiveIndex(index);
