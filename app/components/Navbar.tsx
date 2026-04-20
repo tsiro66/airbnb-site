@@ -18,6 +18,10 @@ export default function Navbar() {
   const circlesRef = useRef<HTMLDivElement>(null);
   const ready = useRef(false);
   const dropdownUsed = useRef(false);
+  const pathname = usePathname();
+
+  // Capture at render time — before Hero's useLayoutEffect (useGSAP) can mutate it
+  const heroWillPlay = useRef(pathname === "/" && !heroIntroPlayed);
 
   // Init
   useEffect(() => {
@@ -33,9 +37,8 @@ export default function Navbar() {
       gsap.set(circles, { display: "none", opacity: 0, y: -10 });
     }
 
-    if (heroIntroPlayed) {
-      gsap.set(nav, { opacity: 1, filter: "blur(0px)" });
-    } else {
+    if (heroWillPlay.current) {
+      // Homepage fresh load — animate in sync with hero intro
       gsap.set(nav, { opacity: 0, filter: "blur(10px)" });
       gsap.to(nav, {
         opacity: 1,
@@ -44,6 +47,9 @@ export default function Navbar() {
         ease: "back.inOut",
         delay: 2.8,
       });
+    } else {
+      // Other pages or hero intro already played — show immediately
+      gsap.set(nav, { opacity: 1, filter: "blur(0px)" });
     }
 
     ready.current = true;
@@ -127,7 +133,6 @@ export default function Navbar() {
   }, [apartmentsOpen]);
 
   const router = useRouter();
-  const pathname = usePathname();
 
   const handleApartmentClick = (index: number) => {
     setOpen(false);

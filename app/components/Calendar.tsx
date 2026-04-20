@@ -45,13 +45,15 @@ export default function Calendar({ apartment }: CalendarProps) {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const monthNavRef = useRef<HTMLDivElement>(null);
   const gridsRef = useRef<HTMLDivElement>(null);
   const legendRef = useRef<HTMLDivElement>(null);
   const summaryRef = useRef<HTMLDivElement>(null);
 
   // Intro animation
   useGSAP(() => {
-    const els = [titleRef.current, gridsRef.current, legendRef.current, summaryRef.current].filter(Boolean);
+    const els = [titleRef.current, subtitleRef.current, monthNavRef.current, gridsRef.current, legendRef.current, summaryRef.current].filter(Boolean);
     gsap.from(els, {
       y: 40,
       opacity: 0,
@@ -131,12 +133,12 @@ export default function Calendar({ apartment }: CalendarProps) {
       >
         {apartment}
       </h2>
-      <p className="text-stone-500 text-center text-sm md:text-base mb-10">
+      <p ref={subtitleRef} className="text-stone-500 text-center text-sm md:text-base mb-10">
         Select your check-in and check-out dates
       </p>
 
       {/* Month navigation */}
-      <div className="flex items-center justify-between mb-8">
+      <div ref={monthNavRef} className="flex items-center justify-between mb-8">
         <button
           onClick={() => navigateMonth(-1)}
           className="p-2 hover:bg-stone-200 rounded-full transition-colors cursor-pointer"
