@@ -9,6 +9,10 @@ import { useGSAP } from "@gsap/react";
 import { apartments } from "../data/apartments";
 gsap.registerPlugin(ScrollTrigger);
 
+// Survives client-side navigation, resets on full page reload
+export let heroIntroPlayed = false;
+export function markHeroIntroPlayed() { heroIntroPlayed = true; }
+
 export default function Hero() {
   const [activeIndex, setActiveIndex] = useState(() => {
     if (typeof window !== "undefined") {
@@ -50,66 +54,70 @@ export default function Hero() {
     const image = imageRef.current;
     if (!section || !sticky || !titleWrap || !title || !subtitle || !btn || !image) return;
 
-    // Calculate offset to center the h1 text in viewport (not the wrapper)
-    const titleRect = title.getBoundingClientRect();
-    const titleCenter = titleRect.top + titleRect.height / 2;
-    const safeVh = window.visualViewport?.height ?? window.innerHeight;
-    const viewportCenter = safeVh / 2;
-    const yOffset = viewportCenter - titleCenter;
-
     const circles = circlesRef.current;
+    if (!heroIntroPlayed) {
+      // Mark immediately so navigating away mid-animation won't replay it
+      markHeroIntroPlayed();
 
-    // Hide everything except title initially
-    gsap.set([subtitle], { autoAlpha: 0, y: 10 });
-    if (circles) gsap.set(circles, { autoAlpha: 0, y: 10 });
-    gsap.set(btn, { autoAlpha: 0, y: 20 });
-    gsap.set(image, { autoAlpha: 0 });
-    gsap.set(titleWrap, { y: yOffset });
+      // Calculate offset to center the h1 text in viewport (not the wrapper)
+      const titleRect = title.getBoundingClientRect();
+      const titleCenter = titleRect.top + titleRect.height / 2;
+      const safeVh = window.visualViewport?.height ?? window.innerHeight;
+      const viewportCenter = safeVh / 2;
+      const yOffset = viewportCenter - titleCenter;
 
-    // Intro timeline
-    const intro = gsap.timeline({ delay: 0.5 });
+      // Hide everything except title initially
+      gsap.set([subtitle], { autoAlpha: 0, y: 10 });
+      if (circles) gsap.set(circles, { autoAlpha: 0, y: 10 });
+      gsap.set(btn, { autoAlpha: 0, y: 20 });
+      gsap.set(image, { autoAlpha: 0 });
+      gsap.set(titleWrap, { y: yOffset });
 
-    // Move title from center to natural position
-    intro.to(titleWrap, {
-      y: 0,
-      duration: 1.2,
-      ease: "power3.inOut",
-    });
+      // Intro timeline
+      const intro = gsap.timeline({ delay: 0.5 });
 
-    // Fade in subtitle
-    intro.to(
-      subtitle,
-      { autoAlpha: 1, y: 0, duration: 0.8, ease: "power2.out" },
-      "-=0.3"
-    );
+      // Move title from center to natural position
+      intro.to(titleWrap, {
+        y: 0,
+        duration: 1.2,
+        ease: "power3.inOut",
+      });
 
-    // Fade in circles
-    if (circles) {
+      // Fade in subtitle
       intro.to(
-        circles,
+        subtitle,
         { autoAlpha: 1, y: 0, duration: 0.8, ease: "power2.out" },
+        "-=0.3"
+      );
+
+      // Fade in circles
+      if (circles) {
+        intro.to(
+          circles,
+          { autoAlpha: 1, y: 0, duration: 0.8, ease: "power2.out" },
+          "-=0.4"
+        );
+      }
+
+      // Fade in book button with slide up
+      intro.to(
+        btn,
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 1,
+          ease: "power2.out",
+        },
         "-=0.4"
       );
+
+      // Fade in image
+      intro.to(
+        image,
+        { autoAlpha: 1, duration: 1, ease: "power2.out" },
+        "-=0.6"
+      );
     }
-
-    // Fade in book button with slide up
-    intro.to(
-      btn,
-      {
-        autoAlpha: 1,
-        y: 0,
-        duration: 1,
-        ease: "power2.out",
-      },
-      "-=0.4"
-    );
-
-    // Fade in image
-    intro.to(
-      image,
-      { autoAlpha: 1, duration: 1, ease: "power2.out" },
-      "-=0.6"
-    );
 
     // Scroll-driven image expansion
     const mm = gsap.matchMedia();

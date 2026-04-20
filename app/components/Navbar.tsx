@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import gsap from "gsap";
 import { apartments } from "../data/apartments";
+import { heroIntroPlayed } from "./Hero";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -32,14 +33,18 @@ export default function Navbar() {
       gsap.set(circles, { display: "none", opacity: 0, y: -10 });
     }
 
-    gsap.set(nav, { opacity: 0, filter: "blur(10px)" });
-    gsap.to(nav, {
-      opacity: 1,
-      filter: "blur(0px)",
-      duration: 0.8,
-      ease: "back.inOut",
-      delay: 2.8,
-    });
+    if (heroIntroPlayed) {
+      gsap.set(nav, { opacity: 1, filter: "blur(0px)" });
+    } else {
+      gsap.set(nav, { opacity: 0, filter: "blur(10px)" });
+      gsap.to(nav, {
+        opacity: 1,
+        filter: "blur(0px)",
+        duration: 0.8,
+        ease: "back.inOut",
+        delay: 2.8,
+      });
+    }
 
     ready.current = true;
   }, []);
