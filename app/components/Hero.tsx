@@ -1,17 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { apartments } from "../data/apartments";
 gsap.registerPlugin(ScrollTrigger);
-
-const apartments = [
-  { src: "/demo-img-1.jpg", label: "Apartment 1" },
-  { src: "/demo-img-2.jpg", label: "Apartment 2" },
-  { src: "/demo-img-3.jpg", label: "Apartment 3" },
-];
 
 export default function Hero() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -21,9 +17,26 @@ export default function Hero() {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const circlesRef = useRef<HTMLDivElement>(null);
-  const btnRef = useRef<HTMLButtonElement>(null);
+  const btnRef = useRef<HTMLAnchorElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const vignetteRef = useRef<HTMLDivElement>(null);
+
+  // Listen for apartment selection from navbar
+  useEffect(() => {
+    // Check if navigated back from another page with a stored selection
+    const stored = sessionStorage.getItem("select-apartment");
+    if (stored !== null) {
+      setActiveIndex(Number(stored));
+      sessionStorage.removeItem("select-apartment");
+    }
+
+    const handler = (e: Event) => {
+      const index = (e as CustomEvent<number>).detail;
+      setActiveIndex(index);
+    };
+    window.addEventListener("select-apartment", handler);
+    return () => window.removeEventListener("select-apartment", handler);
+  }, []);
 
   useGSAP(() => {
     const section = sectionRef.current;
@@ -120,7 +133,7 @@ export default function Hero() {
         const imageTop = circlesBottom + gap;
         const availableH = vh - imageTop - btnGap - btnHeight - btnGap;
         const startH = Math.max(availableH, 80);
-        const startW = mobile ? vw * 0.3 : vw * 0.12;
+        const startW = mobile ? vw * 0.4 : vw * 0.12;
         // Position from top: convert to bottom value
         const startBottom = vh - imageTop - startH;
 
@@ -173,7 +186,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative h-[200svh]">
+    <section id="hero" ref={sectionRef} className="relative h-[200svh]">
       <div ref={stickyRef} className="sticky top-0 h-[100svh] flex flex-col items-center overflow-hidden">
         <div ref={titleWrapRef} className="flex flex-col items-center justify-center pt-40 text-center px-6">
           <h1
@@ -211,12 +224,13 @@ export default function Hero() {
           ))}
         </div>
 
-        <button
-          ref={btnRef}
+        <Link
+          ref={btnRef as React.RefObject<HTMLAnchorElement>}
+          href={`/book?apt=${activeIndex}`}
           className="absolute bottom-20 md:bottom-10 left-1/2 -translate-x-1/2 z-10 rounded-full bg-black text-white px-8 py-3 text-sm md:px-12 md:py-4 md:text-base font-semibold tracking-wide hover:bg-stone-800 transition-colors cursor-pointer shadow-lg"
         >
           Book
-        </button>
+        </Link>
 
         <div ref={imageRef} className="absolute overflow-hidden border border-white/20">
           {apartments.map((apt, i) => (
