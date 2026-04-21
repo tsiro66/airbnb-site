@@ -143,15 +143,17 @@ export default function Hero() {
         const imageTop = circlesBottom + gap;
         const availableH = vh - imageTop - btnGap - btnHeight - btnGap;
         const startH = Math.max(availableH, 80);
-        const startW = mobile ? vw * 0.4 : vw * 0.12;
+        const startW = mobile ? vw * 0.4 : vw * 0.15;
         // Position from top: convert to bottom value
         const startBottom = vh - imageTop - startH;
+
+        const archRadius = mobile ? 100 : 160;
 
         gsap.set(image, {
           width: startW,
           height: startH,
-          borderTopLeftRadius: 100,
-          borderTopRightRadius: 100,
+          borderTopLeftRadius: archRadius,
+          borderTopRightRadius: archRadius,
           bottom: startBottom,
           left: "50%",
           xPercent: -50,
